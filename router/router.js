@@ -17,7 +17,7 @@ router.post('/institution/login', InstitutionController.login)
 
 router.get('/events', EventsController.getEvents)
 router.post('/events-by-search', EventsController.getEventsBySearch)
-router.get('/events/:eventId', EventsController.getEventById)
+router.get('/events-by-event-id/:eventId', EventsController.getEventById)
 
 router.post('/ticket/:eventId', TicketController.postTicketByEvent)
 
@@ -25,10 +25,11 @@ router.get('/image/:filename', ImageUrlController.getImageByUrl)
 
 router.use(AuthMiddleWare.check)
 
-router.get('/institution/logout', InstitutionController.logout) // JWT
+router.delete('/image/:eventId/:filename', ImageUrlController.removeImageByUrl)
+router.post('/image/:eventId', upload.single('photo'), ImageUrlController.addImageByEvent)
 
-router.get('/events/:institutionId', EventsController.getEventsByInstitution) // JWT
-router.post('/events/:institutionId', upload.fields([ { name: 'background', maxCount: 1 }, { name: 'photos', maxCount: 10 } ]), EventsController.postEventByInstitution) // JWT
+router.get('/events-by-institution-id', EventsController.getEventsByInstitution) // JWT
+router.post('/events', upload.fields([ { name: 'background', maxCount: 1 }, { name: 'photos', maxCount: 10 } ]), EventsController.postEventByInstitution) // JWT
 router.put('/events/:eventId', upload.fields([ { name: 'background', maxCount: 1 }, { name: 'photos', maxCount: 10 } ]), EventsController.putEventById) // JWT
 
 router.get('/ticket/:eventId', TicketController.getTicketsByEvent) // JWT

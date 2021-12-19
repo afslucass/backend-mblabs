@@ -9,18 +9,15 @@ const Event = sequelize.define('Event', {
     },
     cep: {
         type: DataTypes.STRING(20),
-        allowNull: false
-    },
-    city: {
-        type: DataTypes.STRING(30),
-        allowNull: false
     },
     address: {
         type: DataTypes.STRING,
-        allowNull: false
     },
     number: {
         type: DataTypes.STRING(10),
+    },
+    city: {
+        type: DataTypes.STRING(30),
         allowNull: false
     },
     region: {
@@ -48,8 +45,8 @@ const Event = sequelize.define('Event', {
     description: {
         type: DataTypes.STRING(5000)
     },
-    backgroundUrlId: {
-        type: DataTypes.INTEGER,
+    backgroundUrl: {
+        type: DataTypes.STRING,
         allowNull: false
     }
 })

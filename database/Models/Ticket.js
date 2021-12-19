@@ -4,7 +4,8 @@ const sequelize = require('../connection')
 const Ticket = sequelize.define('Ticket', {
     code: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        unique: true
     },
     name: {
         type: DataTypes.STRING,
@@ -22,7 +23,8 @@ const Ticket = sequelize.define('Ticket', {
         allowNull: false,
         validate: {
             is: /^\d{3}\.\d{3}\.\d{3}\-\d{2}$/
-        }
+        },
+        unique: true
     }
 })
 

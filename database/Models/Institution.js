@@ -11,9 +11,10 @@ const Institution = sequelize.define('Institution', {
     cnpj: {
         type: DataTypes.STRING(20),
         allowNull: false,
+        unique: true,
         validate: {
             is: /^\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}$/ // 00.000.000/0000-00
-        }
+        },
     },
     password: {
         type: DataTypes.STRING,
