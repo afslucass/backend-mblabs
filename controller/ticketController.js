@@ -1,5 +1,6 @@
 const Event = require("../database/Models/Event")
 const crypto = require('crypto')
+const Ticket = require("../database/Models/Ticket")
 
 const postTicketByEvent = async (req, res, next) => {
     try {
@@ -11,6 +12,9 @@ const postTicketByEvent = async (req, res, next) => {
             code: crypto.createHash('sha256').update(Date.now() + req.body.cpf).digest('base64')
         })
 
+        event.participants += 1
+        event.save()
+
         res.status(200).json(ticket)
     } catch(err) {
         res.status(500).json(err)
@@ -19,10 +23,14 @@ const postTicketByEvent = async (req, res, next) => {
 
 const getTicketsByEvent = async (req, res, next) => {
     try {
-        const event = await Event.findByPk(req.params.eventId)
-        const tickets = await event.getTickets()
+        const event = await Event.findByPk(req.params.eventId, {
+            include: Ticket,
+            order: [
+                [Ticket, 'name', 'ASC']
+            ]
+        })
 
-        res.status(200).json(tickets)
+        res.status(200).json(event)
     } catch(err) {
         res.status(500).json(err)
     }

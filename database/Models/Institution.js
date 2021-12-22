@@ -6,14 +6,18 @@ const bcrypt = require('bcrypt')
 const Institution = sequelize.define('Institution', {
     name: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        validate: {
+            notEmpty: true
+        }
     },
     cnpj: {
         type: DataTypes.STRING(20),
         allowNull: false,
         unique: true,
         validate: {
-            is: /^\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}$/ // 00.000.000/0000-00
+            is: /^\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}$/, // 00.000.000/0000-00            
+            notEmpty: true
         },
     },
     password: {
@@ -21,6 +25,9 @@ const Institution = sequelize.define('Institution', {
         allowNull: false,
         set(value) {
             this.setDataValue('password', bcrypt.hashSync(value, 10))
+        },
+        validate: {
+            notEmpty: true
         }
     }
 })

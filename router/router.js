@@ -30,7 +30,7 @@ router.post('/image/:eventId', upload.single('photo'), ImageUrlController.addIma
 
 router.get('/events-by-institution-id', EventsController.getEventsByInstitution) // JWT
 router.post('/events', upload.fields([ { name: 'background', maxCount: 1 }, { name: 'photos', maxCount: 10 } ]), EventsController.postEventByInstitution) // JWT
-router.put('/events/:eventId', upload.fields([ { name: 'background', maxCount: 1 }, { name: 'photos', maxCount: 10 } ]), EventsController.putEventById) // JWT
+router.put('/events/:eventId', upload.single('background'), EventsController.putEventById) // JWT
 
 router.get('/ticket/:eventId', TicketController.getTicketsByEvent) // JWT
 

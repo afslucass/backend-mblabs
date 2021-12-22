@@ -5,7 +5,10 @@ const sequelize = require('../connection')
 const Event = sequelize.define('Event', {
     name: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        validate: {
+            notEmpty: true
+        }
     },
     cep: {
         type: DataTypes.STRING(20),
@@ -18,11 +21,17 @@ const Event = sequelize.define('Event', {
     },
     city: {
         type: DataTypes.STRING(30),
-        allowNull: false
+        allowNull: false,
+        validate: {
+            notEmpty: true
+        }
     },
     region: {
         type: DataTypes.STRING(5),
-        allowNull: false
+        allowNull: false,
+        validate: {
+            notEmpty: true
+        }
     },
     parentalRating: {
         type: DataTypes.INTEGER,
@@ -36,18 +45,34 @@ const Event = sequelize.define('Event', {
     },
     ticketPrice: {
         type: DataTypes.FLOAT,
-        allowNull: false
+        allowNull: false,
+        validate: {
+            notEmpty: true
+        }
     },
     participantsLimit: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
+        validate: {
+            notEmpty: true
+        }
+    },
+    participants: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        validate: {
+            notEmpty: true
+        }
     },
     description: {
         type: DataTypes.STRING(5000)
     },
     backgroundUrl: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        validate: {
+            notEmpty: true
+        }
     }
 })
 

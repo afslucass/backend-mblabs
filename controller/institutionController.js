@@ -32,11 +32,11 @@ const login = async (req, res, next) => {
         if(institution !== null) {
             correctLogin = bcrypt.compareSync(req.body.password, institution.password)
         } else {
-            return res.status(400).json({ message: 'O login esta errado' })
+            return res.status(400).json({ errors: [{ message: 'O login esta errado' } ]})
         }
 
         if(correctLogin != true) {
-            return res.status(400).json({ message: 'A senha esta errada' })
+            return res.status(400).json({ errors: [{ message: 'A senha esta errada' }] })
         }
 
         let token = jwt.sign({

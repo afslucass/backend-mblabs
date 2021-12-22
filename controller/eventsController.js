@@ -15,11 +15,11 @@ const getEvents = async (req, res, next) => {
 
 const getEventsBySearch = async (req, res, next) => {
     try {
-        const events = await Event.findAll({ order: [[ 'createdAt', 'ASC' ]], limit: 10, where: {
+        const events = await Event.findAll({ order: [[ 'createdAt', 'DESC' ]], limit: 10, where: {
             name: {
                 [Op.substring]: `${req.body.search}`
             }
-        }, include: ImagesUrl})
+        }, include: [ImagesUrl, { model: Institution, attributes: ['name'] }]})
 
         res.status(200).json(events)
     } catch(err) {
@@ -30,7 +30,7 @@ const getEventsBySearch = async (req, res, next) => {
 const getEventById = async (req, res, next) => {
     try {
         const events = await Event.findByPk(req.params.eventId, {
-            include: ImagesUrl
+            include: [ImagesUrl, { model: Institution, attributes: ['name'] }]
         })
 
         res.status(200).json(events)
@@ -41,8 +41,13 @@ const getEventById = async (req, res, next) => {
 
 const getEventsByInstitution = async (req, res, next) => {
     try {
-        const institution = await Institution.findByPk(req.body.idByToken, {
-            include: Event
+        const institution = await Institution.findByPk(req.query.idByToken, {
+            include: {
+                model: Event,
+            },
+            order: [
+                [Event, 'createdAt', 'DESC']
+            ]
         })
 
         res.status(200).json(institution)
@@ -54,14 +59,13 @@ const getEventsByInstitution = async (req, res, next) => {
 const postEventByInstitution = async (req, res, next) => {
     try {
 
-        if(req.files['background'].length == 0) {
-            res.status(400).json({ message: 'Deve haver uma imagem de fundo' })
+        if(!req.files['background']) {
+            return res.status(400).json({ errors: [{ message: 'Deve haver uma imagem de fundo' }] })
         }
 
-        const institution = await Institution.findByPk(req.body.idByToken)
-
+        const institution = await Institution.findByPk(req.query.idByToken)
         if(institution === null) {
-            return res.status(400).json({ message: 'No institution with that id' })
+            return res.status(400).json({ errors: [{ message: 'No institution with that id' }] })
         }
 
         const event = await institution.createEvent({
@@ -76,13 +80,16 @@ const postEventByInstitution = async (req, res, next) => {
             finishDate: req.body.finishDate,
             ticketPrice: req.body.ticketPrice,
             participantsLimit: req.body.participantsLimit,
+            participants: 0,
             description: req.body.description,
             backgroundUrl: req.files['background'][0].filename
         })
 
-        req.files['photos'].forEach(async element => {
-            await event.createImagesUrl({ url: element.filename })
-        });
+        if(req.files['photos']) {
+            req.files['photos'].forEach(async element => {
+                await event.createImagesUrl({ url: element.filename })
+            });
+        }
 
         res.status(200).json(event)
     } catch(err) {
@@ -93,6 +100,7 @@ const postEventByInstitution = async (req, res, next) => {
 
 const putEventById = async (req, res, next) => {
     try {
+        console.log(req.file)
         let event = await Event.findByPk(req.params.eventId, { include: ImagesUrl })
     
         event.cidade = req.body.cidade
@@ -103,14 +111,18 @@ const putEventById = async (req, res, next) => {
         event.cep = req.body.cep
         event.number = req.body.number
         event.parentalRating = req.body.parentalRating
-        event.startDate = req.body.startDate
-        event.finishDate = req.body.finishDate
+        if(req.body.startDate <0) {
+            event.startDate = req.body.startDate
+        }
+        if(req.body.finishDate <0) {
+            event.finishDate = req.body.finishDate
+        }
         event.ticketPrice = req.body.ticketPrice
         event.participantsLimit = req.body.participantsLimit
         event.description = req.body.description
     
-        if(req.files['background'] !== undefined) {
-            event.backgroundUrl = req.files['background'][0].filename
+        if(req.file) {
+            event.backgroundUrl = req.file.filename
         }
 
         await event.save()
